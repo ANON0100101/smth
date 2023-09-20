@@ -3,6 +3,8 @@ from django.contrib.auth import get_user_model, authenticate
 
 from applications.account.utils import send_activation_code
 
+# from applications.account.utils import send_activation_code
+
 User = get_user_model()
 
 

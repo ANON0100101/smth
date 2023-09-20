@@ -1,7 +1,7 @@
 import uuid
 from rest_framework import serializers
 from rest_framework.response import Response
-from applications.account.utils import send_activation_code
+from applications.bilets.utils import send_order_email
 from applications.bilets.models import *
 
 
@@ -63,12 +63,16 @@ class TicketSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Order
-        fields = ('ticket_id', 'email', 'name', 'phone_number', 'created_at')
+        fields = ('ticket', 'name', 'phone_number', 'created_at')
 
     def create(self, validated_data):
+        request = self.context.get('request')
+        instance = super().create(validated_data)
+        instance.create_activation_code()
 
-        return Response('Отлично, Перейдите на почту что бы подвердить покупку', status=200)
-
+        send_order_email(request.user.email, instance.activation_code, request.user.name)
+        return instance
 

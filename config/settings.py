@@ -42,8 +42,8 @@ INSTALLED_APPS = [
     # libraries
     'rest_framework',
     'rest_framework_simplejwt',
-    'drf_yasg',
     'django_filters',
+    'drf_yasg',
 
     # apps
     'applications.account',
@@ -177,41 +177,41 @@ SWAGGER_SETTINGS = {
 }
 
 
-import logging
-
-
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-      "main_format": {
-          "format": "{asctime} - {levelname} - {module} - {filename} - {message}",
-          "style": "{",
-      },
-    },
-    "handlers": {
-        "file": {
-            "class": "logging.FileHandler",
-            "formatter": 'main_format',
-            "filename": "log.log",
-        },
-        "console": {
-            "class": "logging.StreamHandler",
-            "formatter": "main_format",
-        },
-    },
-    "loggers": {
-        "django": {
-            "handlers": ["file"],
-            "level": "DEBUG",
-            "propagate": True,
-        },
-    },
-}
-
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
-        "LOCATION": "127.0.0.1:11211",
-    }
-}
+# import logging
+#
+#
+# LOGGING = {
+#     "version": 1,
+#     "disable_existing_loggers": False,
+#     "formatters": {
+#       "main_format": {
+#           "format": "{asctime} - {levelname} - {module} - {filename} - {message}",
+#           "style": "{",
+#       },
+#     },
+#     "handlers": {
+#         "file": {
+#             "class": "logging.FileHandler",
+#             "formatter": 'main_format',
+#             "filename": "log.log",
+#         },
+#         "console": {
+#             "class": "logging.StreamHandler",
+#             "formatter": "main_format",
+#         },
+#     },
+#     "loggers": {
+#         "django": {
+#             "handlers": ["file"],
+#             "level": "DEBUG",
+#             "propagate": True,
+#         },
+#     },
+# }
+#
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
+#         "LOCATION": "127.0.0.1:11211",
+#     }
+# }

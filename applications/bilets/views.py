@@ -1,3 +1,4 @@
+from django.db.models import F
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
@@ -20,7 +21,7 @@ from applications.bilets.utils import send_order_email
 class TicketAPIView(viewsets.ModelViewSet):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
-    permission_classes = [IsOwner]
+    permission_classes = [IsOwnerOrReadOnly]
     pagination_class = LargeResultsSetPagination
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['owner', 'title']
@@ -87,7 +88,17 @@ class CommentModelViewSet(viewsets.ModelViewSet):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class OrderActivationAPIView(viewsets.ModelViewSet):
+    def get(self, activation_code):
+        order = get_object_or_404(User, activation_code=activation_code)
+        order.activation_code = ''
+        order.save(update_fields=['is_active', 'activation_code'])
+        ...
+        return Response('Вы Успешно приобрели подвердили покупку', status=200)
+

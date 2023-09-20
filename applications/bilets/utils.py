@@ -1,14 +1,13 @@
 from django.core.mail import send_mail
 
 
-def send_order_email(email, code):
+def send_order_email(email, code, name):
     send_mail(
-        'Py29',
-        f'Привет перейди по этой ссылке чтобы подвердить покупку: '
-        f'\n\n http://localhost:8000/api/bilets/completed/{code}',
+        'Bilet.kg',
+        f'Привет {name}, перейди по этому пути что бы подвердить покупку: '
+        f' \n\n http://localhost:8000/api/bilets/activate/',
         'sassassas107@gmail.com',
         [email]
     )
-
 
 

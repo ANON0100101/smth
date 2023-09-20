@@ -22,13 +22,12 @@ from django.conf.urls.static import static
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-
 schema_view = get_schema_view(
    openapi.Info(
       title="billet.kg",
       default_version='v1',
       description="Best blog",
-      contact=openapi.Contact(email="admin@admin.com"),
+      contact=openapi.Contact(email="rodion dereha "),
    ),
    public=True,
 )

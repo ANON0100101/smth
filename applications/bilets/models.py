@@ -93,10 +93,15 @@ def my_handler(sender, instance, created, **kwargs):
 
 
 class Order(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    ticket_id = models.CharField(max_length=255)
+    name = models.CharField(max_length=70)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='orders')
+    ticket = models.ForeignKey(
+        Ticket, on_delete=models.CASCADE, related_name='orders')
     phone_number = models.CharField(max_length=20)
     created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=False)
+    activation_code = models.CharField(max_length=40, blank=True)
 
     def create_activation_code(self):
         import uuid

@@ -4,6 +4,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 from applications.account.views import RegisterAPIView, ActivationAPIView
+from applications.bilets.views import OrderActivationAPIView
 
 urlpatterns = [
     path('register/', RegisterAPIView.as_view()),

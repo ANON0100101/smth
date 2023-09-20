@@ -10,8 +10,10 @@ class IsOwnerOrAdminOrReadOnly(BasePermission):
         return request.user.is_authenticated and request.user == obj.owner or request.user.is_staff
 
 
-class IsOwner(BasePermission):
+class IsOwnerOrReadOnly(BasePermission):
     def has_permission(self, request, view):
-
+        if request.method == 'GET':
+            return request.user.is_authenticated
         return request.user and request.user.is_superuser
+
 
