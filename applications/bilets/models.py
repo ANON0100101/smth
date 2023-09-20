@@ -25,6 +25,11 @@ class Ticket(models.Model):
     created_at = models.DateTimeField('Дата создания', auto_now_add=True)
     updated_at = models.DateTimeField('Дата обновления', auto_now=True)
 
+    def decrease_total_ticket(self):
+        if self.total_ticket > 0:
+            self.total_ticket -= 1
+            self.save(update_fields=['total_ticket'])
+
     def __str__(self):
         return f'{self.title}'
 
@@ -107,6 +112,7 @@ class Order(models.Model):
         import uuid
         code = str(uuid.uuid4())
         self.activation_code = code
+        self.save()
 
     def __str__(self):
         return f"Order {self.pk} by {self.user.username}"

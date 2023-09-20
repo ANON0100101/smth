@@ -3,7 +3,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from applications.account.views import RegisterAPIView, ActivationAPIView
+from applications.account.views import RegisterAPIView, ActivationAPIView, ChangePasswordAPIView
 from applications.bilets.views import OrderActivationAPIView
 
 urlpatterns = [
@@ -11,4 +11,5 @@ urlpatterns = [
     path('activate/<uuid:activation_code>/', ActivationAPIView.as_view()),
     path('login/', TokenObtainPairView.as_view()),
     path('refresh/', TokenRefreshView.as_view()),
+    path('change_password/', ChangePasswordAPIView.as_view()),
 ]

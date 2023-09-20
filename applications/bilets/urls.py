@@ -1,16 +1,20 @@
-# from rest_framework.urls import path
+from rest_framework.urls import path
 from applications.bilets.views import *
 from rest_framework.routers import DefaultRouter
 
 
 router = DefaultRouter()
-router.register('activate/<str:activation_code>/', OrderActivationAPIView, basename='activation_code')
 router.register('order', OrderViewSet, basename='order')
 router.register('comment', CommentModelViewSet)
 router.register('', TicketAPIView)
 
 
-urlpatterns = []
+urlpatterns = [
+    path('activate/<uuid:activation_code>', OrderActivationAPIView.as_view()),
+    # path('get_all/', TicketListView.as_view(), name='ticket-list'),
+    # Добавьте URL-путь для вывода списка комментариев
+    # path('get_comments/', AllCommentsAPIView.as_view({'get': 'list'}), name='all_comments'),
+]
 
 
 urlpatterns += router.urls

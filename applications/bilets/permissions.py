@@ -1,3 +1,4 @@
+from rest_framework import permissions
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 
@@ -17,3 +18,13 @@ class IsOwnerOrReadOnly(BasePermission):
         return request.user and request.user.is_superuser
 
 
+class CanCreateUpdateDeleteTicket(permissions.BasePermission):
+    def has_permission(self, request, view):
+        # Разрешено создавать, удалять и обновлять билеты только администраторам
+        return request.user.is_authenticated and request.user.is_staff
+
+
+class CanInteractWithTicket(permissions.BasePermission):
+    def has_permission(self, request, view):
+        # Разрешено взаимодействие с билетами (например, комментарии, рейтинги, лайки) аутентифицированным пользователям
+        return request.user.is_authenticated

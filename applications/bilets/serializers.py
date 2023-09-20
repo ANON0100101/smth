@@ -75,4 +75,5 @@ class OrderSerializer(serializers.ModelSerializer):
 
         send_order_email(request.user.email, instance.activation_code, request.user.name)
         return instance
+        # return Response('Отлично, Мы отправили вам на почту подверждение покупки')
 
