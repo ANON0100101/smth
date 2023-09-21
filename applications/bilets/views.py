@@ -154,3 +154,64 @@ class OrderActivationAPIView(APIView):
 #     queryset = Comment.objects.all().order_by('-id')
 #     serializer_class = CommentSerializer
 #     permission_classes = []
+
+# class GetTicketDataAPIView(viewsets.ViewSet):
+#         permission_classes = []
+#         serializer_class = TicketSerializer
+#
+#     def retrieve(self, request, *args, **kwargs):
+#
+#         action_type = kwargs.get('action_type')
+#
+#         if action_type not in ['like', 'rating', 'favorite', 'comment']:
+#             return Response({"detail": "Invalid action type"}, status=status.HTTP_400_BAD_REQUEST)
+#
+#         user = request.user
+#         queryset = Ticket.objects.filter(
+#             Q(likes__owner=user, likes__is_like=True) |
+#             Q(ratings__owner=user) |
+#             Q(comments__owner=user) |
+#             Q(favorites__owner=user)
+#         ).distinct()
+#
+#         result = {
+#             "action_type": action_type,
+#             "data": []
+#         }
+#
+#         for ticket in queryset:
+#             data_item = {
+#                 "post": ticket.id,
+#                 "title": ticket.title,
+#                 "comment": "none",
+#                 "like": "unliked",
+#                 "rating": None,
+#                 "favorite": "not favorite"
+#             }
+#
+#             if action_type == 'like':
+#                 data_item["like"] = "liked" if ticket.likes.filter(owner=user, is_like=True).exists() else "unliked"
+#
+#             if action_type == 'rating':
+#                 rating_obj = ticket.ratings.filter(owner=user).first()
+#                 if rating_obj:
+#                     data_item["rating"] = rating_obj.rating
+#
+#             if action_type == 'favorite':
+#                 data_item["favorite"] = "favorite" if ticket.favorites.filter(owner=user, is_favorite=True).exists() else "not favorite"
+#
+#             if action_type == 'comment':
+#                 comment_obj = ticket.comments.filter(owner=user).first()
+#                 if comment_obj:
+#                     data_item["comment"] = comment_obj.body
+#
+#             result["data"].append(data_item)
+#
+#         return Response(result)
+#
+#
+#     def get_permissions(self):
+#         if self.action in ['create', 'update', 'partial_update', 'destroy']:
+#             return [CanCreateUpdateDeleteTicket()]
+#         else:
+#             return [CanInteractWithTicket()]

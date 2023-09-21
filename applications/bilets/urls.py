@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 
 
 router = DefaultRouter()
+
 router.register('order', OrderViewSet, basename='order')
 router.register('comment', CommentModelViewSet)
 router.register('', TicketAPIView)
@@ -11,9 +12,7 @@ router.register('', TicketAPIView)
 
 urlpatterns = [
     path('activate/<uuid:activation_code>', OrderActivationAPIView.as_view()),
-    # path('get_all/', TicketListView.as_view(), name='ticket-list'),
-    # Добавьте URL-путь для вывода списка комментариев
-    # path('get_comments/', AllCommentsAPIView.as_view({'get': 'list'}), name='all_comments'),
+    # path('bilets/get_data/<str:action_type>/', GetTicketDataAPIView.as_view({'get': 'list'}), name='get-ticket-data'),
 ]
 
 
