@@ -1,9 +1,10 @@
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 
 from applications.account.utils import send_activation_code
-
-# from applications.account.utils import send_activation_code
 
 User = get_user_model()
 
@@ -48,3 +49,41 @@ class LoginSerializer(serializers.Serializer):
             return attrs
         raise serializers.ValidationError('Неверный пароль!')
 
+
+class CreatePasswordSerializer(serializers.Serializer):
+    new_password = serializers.CharField(required=True, min_length=6, write_only=True)
+    current_password = serializers.CharField(required=True, write_only=True)
+
+    class Meta:
+        models = User
+        fields = ('email', 'password', 'new_password', 'current_password')
+
+
+class AccountRecoverySerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    token = serializers.CharField()  # Добавляем поле для токена
+
+    def validate(self, data):
+        email = data.get('email')
+        token = data.get('token')
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            raise serializers.ValidationError('Пользователь с таким email не существует')
+
+        # Декодируем uidb64 и проверяем токен
+        try:
+            uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+            if not default_token_generator.check_token(user, token):
+                raise serializers.ValidationError('Недействительный токен')
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            raise serializers.ValidationError('Недопустимые параметры uidb64 или пользователь не найден')
+
+        # Возвращаем проверенные данные
+        return data
+
+
+
+class ResetPasswordSerializer(serializers.Serializer):
+    new_password = serializers.CharField()

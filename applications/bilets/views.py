@@ -1,14 +1,11 @@
+from bs4 import BeautifulSoup
+from django.contrib.sites import requests
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.views import APIView
-import uuid
-
-from django.db.models import Q, Count, Case, When, Value, BooleanField
-from rest_framework import viewsets
-from applications.bilets.models import Ticket
-from .serializers import TicketSerializer
+from parsing_dollar import parse_currency
 from applications.bilets.serializers import *
 from applications.bilets.models import *
 from applications.bilets.paginations import *
@@ -17,9 +14,9 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 import logging
-import secrets
-from django.db.models import Q
-from applications.bilets.utils import send_order_email
+from django.http import HttpResponse
+# from applications.bilets.models import USDRate
+# from .parcing_dollar import parse_currency
 
 
 class TicketAPIView(viewsets.ModelViewSet):
@@ -82,7 +79,6 @@ class TicketAPIView(viewsets.ModelViewSet):
             return [CanCreateUpdateDeleteTicket()]
         else:
             return [CanInteractWithTicket()]
-
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -149,6 +145,44 @@ class OrderActivationAPIView(APIView):
             return Response('Заказ уже был подтвержден', status=status.HTTP_400_BAD_REQUEST)
 
 
+def get_usd_rate(request):
+    url = "https://www.akchabar.kg/ru/exchange-rates/dollar/"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    currency_element = soup.find('div', class_='nbkr_tabs_wrapper')
+    usd_rate = currency_element.find('span', class_="").text
+
+    usd_rate = float(usd_rate.strip().replace(',', '.'))
+
+    return HttpResponse(f"USD Rate: {usd_rate}")
+
+def save(self, *args, **kwargs):
+    is_new = self._state.adding
+    if not is_new:
+        old_obj = self.User.objects.get(id=self.id)
+        version_data = {
+            "id": old_obj.pk,
+            "name": old_obj.name,
+            "category": old_obj.category.slug,
+            "digit_range": old_obj.digit_range,
+            "number_range_initial": str(old_obj.number_range_initial),
+            "number_range_finally": str(old_obj.number_range_finally),
+            "calculation_type": old_obj.calculation_type,
+            "reverse_calculation": old_obj.reverse_calculation,
+            "reverse_calculation": old_obj.reverse_calculation,
+        }
+        self.version_history = version_data
+    return super().save(*args, **kwargs)
+
+def update_usd_rate(request):
+    usd_rate = parse_currency()
+    if usd_rate is not None:
+        usd_rate_model = USDRate(rate=usd_rate)
+        usd_rate_model.save()
+        return HttpResponse("USD Rate updated successfully.")
+    else:
+        return HttpResponse("USD Rate not found on the website.")
 
 # class AllCommentsAPIView(viewsets.ReadOnlyModelViewSet):
 #     queryset = Comment.objects.all().order_by('-id')

@@ -1,5 +1,3 @@
-import uuid
-
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
@@ -116,4 +114,12 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order {self.pk} by {self.user.username}"
+
+class USDRate(models.Model):
+    rate = models.CharField(primary_key=True, auto_created=True)
+
+class BitRate(models.Model):
+    rate = models.FloatField(primary_key=True)
+
+
 

@@ -6,7 +6,7 @@ def send_order_email(email, code, name):
         'Bilet.kg',
         f'Привет {name}, перейди по этому пути что бы подвердить покупку: '
         f' \n\n http://localhost:8000/api/bilets/activate/{code}',
-        'sassassas107@gmail.com',
+        'a.kudaikulov04@gmail.com',
         [email]
     )
 
